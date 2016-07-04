@@ -1,0 +1,86 @@
+<head>
+    <script src="https://rawgit.com/pixijs/pixi.js/dev/bin/pixi.js"></script>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/styles/ascetic.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/highlight.min.js"></script>
+    <script src="../animate/easing.js"></script>
+    <script src="../animate/animate.js"></script>
+    <script src="../update/update.js"></script>
+    <script src="../debug/debug.js"></script>
+    <script src="../renderer/renderer.js"></script>
+    <script src="viewport.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        .title {
+            margin-top: 1%;
+            margin-left: 15%;
+            font-size: 200%;
+        }
+        #code {
+            left: 15%;
+            position: absolute;
+            word-wrap: break-word;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="title">Example for <a href="https://github.com/davidfig/viewport/">github.com/davidfig/viewport/</a></div>
+    <pre><code class="javascript" id="code"></code></pre>
+    <script id="sample">
+
+        // debug panel on the bottom right
+        Debug.init();
+
+        // used for automatic rendering
+        Update.init();
+        Update.update();
+
+        var div = document.createElement('div');
+        document.body.appendChild(div);
+        div.style.position = 'absolute';
+        div.style.width = '50%';
+        div.style.height = '50%';
+        div.style.left = div.offsetWidth / 2 + 'px';
+        div.style.top = div.offsetHeight / 2 + 'px';
+        var renderer = new Renderer({div: div, color: 'rgba(0, 0, 0, 0.25)'});
+        var viewport = new Viewport(renderer, width, height);
+
+        var width = 10000;
+        var height = 10000;
+
+        // set initial position for all circles
+        for (var i = 0; i < 1000; i++)
+        {
+            var t = circle(100, Math.random() * 0xffffff);
+            t.position.set(Math.random() * width, Math.random() * height);
+        }
+
+        viewport.fit();
+
+        // create the stars
+        function circle(size, color)
+        {
+            var half = size / 2;
+            var g = new PIXI.Graphics();
+            renderer.add(g);
+            g.beginFill(color);
+            g.drawCircle(half, half, half);
+            g.endFill();
+            // g.alpha = 0.25;
+            return g;
+        }
+
+    </script>
+    <script>
+        window.onload = function()
+        {
+            var code = document.getElementById('code');
+            var script = document.getElementById('sample');
+            code.innerHTML = script.innerHTML;
+            hljs.highlightBlock(code);
+        };
+    </script>
+</body>

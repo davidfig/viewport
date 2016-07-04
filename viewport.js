@@ -1,0 +1,436 @@
+/*
+    viewport.js <https://github.com/davidfig/viewport>
+    License: MIT license <https://github.com/davidfig/viewport/license>
+    Author: David Figatner
+    Copyright (c) 2016 YOPEY YOPEY LLC
+*/ (function(){
+
+// creates a zoomable and moveable window into a scene
+// renderer is of type github.com/davidfig/renderer
+// stage is optional and taken from renderer if not specified
+Viewport = function(renderer, width, height, stage)
+{
+    this.renderer = renderer;
+    this.stage = stage || renderer.stage;
+    this.stage.rotation = 0;
+    this.center = {x: 0, y: 0};
+    this.view(width, height);
+};
+
+Object.defineProperty(Viewport.prototype, "rotation", {
+    get: function ()
+    {
+        return this.stage.rotation;
+    },
+    set: function(value)
+    {
+        this.stage.rotation = value;
+        this.cos = Math.cos(value);
+        this.sin = Math.sin(value);
+    }
+});
+
+// Change view window for viewport
+Viewport.prototype.view = function(width, height, center)
+{
+    if (width !== 0)
+    {
+        this.width = width;
+        this.height = (width * this.renderer.height) / this.renderer.width;
+    }
+    else
+    {
+        this.height = height;
+        this.width = (height * this.renderer.width) / this.renderer.height;
+    }
+    if (center)
+    {
+        this.center.x = center.x;
+        this.center.y = center.y;
+    }
+    this.recalculate();
+};
+
+Viewport.prototype.resize = function()
+{
+    this.view(this.renderer.width, 0);
+};
+
+Viewport.prototype.move = function(deltaX, deltaY)
+{
+    this.center.x += deltaX;
+    this.center.y += deltaY;
+    this.recalculate();
+};
+
+// moves the viewport to
+// alternatively accepts function (point), where point = {x: x, y: y}
+Viewport.prototype.moveTo = function(x, y)
+{
+    if (arguments.length === 1)
+    {
+        this.center.x = arguments[0].x;
+        this.center.y = arguments[0].y;
+    }
+    else
+    {
+        this.center.x = x;
+        this.center.y = y;
+    }
+    this.recalculate();
+};
+
+// move the viewport to (x, y) as calculated from the top-left of the viewport
+Viewport.prototype.moveTopLeft = function(x, y)
+{
+    this.center.x = x + this.width / 2;
+    this.center.y = y + this.height / 2;
+    this.recalculate();
+};
+
+// Center viewport in the stage
+Viewport.prototype.centerView = function()
+{
+    this.center.x = this.stage.width / 2;
+    this.center.y = this.stage.height / 2;
+    this.recalculate();
+};
+
+// zooms to pixels based on view width
+Viewport.prototype.zoom = function(zoomDelta, center)
+{
+    this.width += zoomDelta;
+    this.height += zoomDelta * this.screenRatio;
+    if (center)
+    {
+        this.center.x = center.x;
+        this.center.y = center.y;
+    }
+    this.recalculate();
+};
+
+// pinch to zoom
+// amount, x, & y in screen coordinates; min and max in world coordinates
+Viewport.prototype.zoomPinch = function(amount, min, max, center)
+{
+    var change = amount + this.width;
+    change = (change < min) ? min : change;
+    change = (change > max) ? max : change;
+    var deltaX, deltaY;
+    if (center)
+    {
+        this.center = this.toWorldFromScreen(center);
+        deltaX = (this.renderer.width / 2 - x) / this.renderer.width;
+        deltaY = (this.renderer.height / 2 - y) / this.renderer.height;
+    }
+    this.width = change;
+    this.height = change * this.screenRatio;
+    if (center)
+    {
+        this.center.x += this.width * deltaX;
+        this.center.y += this.height * deltaY;
+    }
+    this.recalculate();
+};
+
+// if zoomX is 0, then ZoomY is used to calculated zoomX
+Viewport.prototype.zoomTo = function(zoomX, zoomY, center)
+{
+    this.width = zoomX || zoomY / this.screenRatio;
+    this.height = zoomY || zoomX * this.screenRatio;
+    if (center)
+    {
+        this.center.x = center.x;
+        this.center.y = center.y;
+    }
+    this.recalculate();
+};
+
+Viewport.prototype.zoomPercent = function(percent, center)
+{
+    this.width += this.width * percent;
+    this.height += this.height * percent;
+    if (center)
+    {
+        this.center.x = center.x;
+        this.center.y = center.y;
+    }
+    this.recalculate();
+};
+
+// fit entire stage width on screen
+Viewport.prototype.fitX = function()
+{
+    this.view(this.stage.width, 0);
+};
+
+// fit entire stage height on screen
+Viewport.prototype.fitY = function()
+{
+    this.view(0, this.stage.height);
+};
+
+// fit entire stage on screen
+Viewport.prototype.fit = function()
+{
+    if (this.stage.width / this.stage.height > this.renderer.width / this.renderer.height)
+    {
+        this.fitX();
+    }
+    else
+    {
+        this.fitY();
+    }
+};
+
+// change height of view area
+Viewport.prototype.heightTo = function(height)
+{
+    this.view(0, height, this.center);
+};
+
+
+// transform a world coordinate to a screen coordinate
+Viewport.prototype.toWorldFromScreen = function()
+{
+    var screen = {x: 0, y: 0};
+    if (arguments.length === 1)
+    {
+        screen.x = arguments[0].x;
+        screen.y = arguments[0].y;
+    }
+    else
+    {
+        screen.x = arguments[0];
+        screen.y = arguments[1];
+    }
+
+    var point;
+    if (this.stage.rotation)
+    {
+        var x = (screen.x - this.renderer.width / 2) * this.screenToViewRatio;
+        var y = (screen.y - this.renderer.height / 2) * this.screenToViewRatio;
+        var rotatedX = x * this.cos + y * this.sin;
+        var rotatedY = y * this.cos - x * this.sin;
+        point = new PIXI.Point(rotatedX + this.center.x, rotatedY + this.center.y);
+    }
+    else
+    {
+        var x = this.center.x + (screen.x - this.renderer.width / 2) * this.screenToViewRatio;
+        var y = this.center.y + (screen.y - this.renderer.height / 2) * this.screenToViewRatio;
+        point = new PIXI.Point(x, y);
+    }
+    return point;
+};
+
+
+// transform a screen coordinate to a world coordinate
+Viewport.prototype.toScreenFromWorld = function(world)
+{
+    var point;
+    if (this.stage.rotation)
+    {
+        var x = world.x - this.center.x;
+        var y = world.y - this.center.y;
+        var rotatedX = x * this.cos - y * this.sin;
+        var rotatedY = y * this.cos + x * this.sin;
+        var x = (rotatedX + this.width / 2) * this.viewToScreenRatio;
+        var y = (rotatedY + this.height / 2) * this.viewToScreenRatio;
+        point = new PIXI.Point(x, y);
+    }
+    else
+    {
+        var x = (world.x - this.center.x + this.width / 2) * this.viewToScreenRatio;
+        var y = (world.y - this.center.y + this.height / 2) * this.viewToScreenRatio;
+        point = new PIXI.Point(x, y);
+    }
+    return point;
+};
+
+// Transform a number from view size to screen size
+Viewport.prototype.toScreenSize = function(original)
+{
+    return original * this.viewToScreenRatio;
+};
+
+// Transform a number from screen size to view size
+Viewport.prototype.toWorldSize = function(original)
+{
+    return original * this.screenToViewRatio;
+};
+
+
+// return screen height in the world coordinate system
+Viewport.prototype.screenHeightInWorld = function()
+{
+    return this.toWorldSize(this.renderer.height);
+};
+
+// return screen width in the world coordinate system
+Viewport.prototype.screenWidthInWorld = function()
+{
+    return this.toWorldSize(this.renderer.width);
+};
+
+Viewport.prototype.worldWidth = function()
+{
+    return this.stage.width;
+};
+
+Viewport.prototype.worldHeight = function()
+{
+    return this.stage.height;
+};
+
+// converts an x value to a y value in the screen coordinates
+Viewport.prototype.screenXtoY = function(x)
+{
+    return x * this.renderer.height / this.renderer.width;
+};
+
+// converts a y value to an x value in the screen coordinates
+Viewport.prototype.screenYtoX = function(y)
+{
+    return y * this.renderer.width / this.renderer.height;
+};
+
+Viewport.prototype.scaleGet = function()
+{
+    return this.stage.scale.x;
+};
+
+// recalucates and repositions
+Viewport.prototype.recalculate = function()
+{
+    this.screenToViewRatio = this.width / this.renderer.width;
+    this.viewToScreenRatio = this.renderer.width / this.width;
+    this.screenRatio = this.renderer.height / this.renderer.width;
+
+    this.stage.scale.x = this.stage.scale.y = this.viewToScreenRatio;
+    this.stage.pivot.x = this.center.x;
+    this.stage.pivot.y = this.center.y;
+    this.stage.position.x = this.width / 2 * this.stage.scale.x;
+    this.stage.position.y = this.width / 2 * this.stage.scale.y;
+
+    this.renderer.dirty = true;
+};
+
+/* OLD FUNCTIONS THAT I'VE NOT CONVERTED YET (WAITING UNTIL I NEED THEM)
+
+// Makes another PIXI.Container subject to viewport transforms
+Viewport.prototype.apply = function(container)
+{
+    container.position = this.stage.position;
+    container.scale = this.stage.scale;
+    container.pivot = this.stage.pivot;
+};
+
+Viewport.prototype.clampX = function()
+{
+    if (this.size.view.x <= this.size.world.x)
+    {
+        if (this.center.x - this.size.view.x / 2 < 0)
+        {
+            this.center.x = this.size.view.x / 2;
+        }
+        if (this.center.x + this.size.view.x / 2 > this.size.world.x)
+        {
+            this.center.x = this.size.world.x - this.size.view.x / 2;
+        }
+    }
+    this.recalculate();
+};
+
+Viewport.prototype.clampY = function()
+{
+    if (this.size.view.y <= this.size.world.y)
+    {
+        if (this.center.y - this.size.view.y / 2 < 0)
+        {
+            this.center.y = this.size.view.y / 2;
+        }
+        if (this.center.y + this.size.view.y / 2 > this.size.world.y)
+        {
+            this.center.y = this.size.world.y - this.size.view.y / 2;
+        }
+    }
+    this.recalculate();
+};
+
+Viewport.prototype.clamp = function() {
+    if (this.size.view.x <= this.size.world.x)
+    {
+        if (this.center.x - this.size.view.x / 2 < 0)
+        {
+            this.center.x = this.size.view.x / 2;
+        }
+        if (this.center.x + this.size.view.x / 2 > this.size.world.x)
+        {
+            this.center.x = this.size.world.x - this.size.view.x / 2;
+        }
+    }
+    if (this.size.view.y <= this.size.world.y)
+    {
+        if (this.center.y - this.size.view.y / 2 < 0)
+        {
+            this.center.y = this.size.view.y / 2;
+        }
+        if (this.center.y + this.size.view.y / 2 > this.size.world.y)
+        {
+            this.center.y = this.size.world.y - this.size.view.y / 2;
+        }
+    }
+    this.recalculate();
+};
+
+// only works with a 100% div (default div)
+Viewport.prototype.uncrop = function()
+{
+    var div = this.renderer.div;
+    div.style.left = 0;
+    div.style.top = 0;
+    div.style.width = '100%';
+    div.style.height = '100%';
+};
+
+Viewport.prototype.crop = function()
+{
+    var div = this.renderer.div;
+    var width = this.size.world.x * this.stage.scale.x;
+    var height = this.size.world.y * this.stage.scale.y;
+    div.style.width = width + 'px';
+    div.style.height = height + 'px';
+    this.left = this.size.screen.x / 2 - width / 2;
+    this.top = this.size.screen.y / 2 - height / 2;
+    div.style.left =  this.left + 'px';
+    div.style.top = this.top + 'px';
+    this.stage.pivot.x = 0;
+    this.stage.pivot.y = 0;
+    this.stage.position.x = 0;
+    this.stage.position.y = 0;
+};
+
+*/
+
+// add support for AMD (Asynchronous Module Definition) libraries such as require.js.
+if (typeof define === 'function' && define.amd)
+{
+    define(function()
+    {
+        return {
+            Viewport: Viewport
+        };
+    });
+}
+
+// add support for CommonJS libraries such as browserify.
+if (typeof exports !== 'undefined')
+{
+    exports.Viewport = Viewport;
+}
+
+// define globally in case AMD is not available or available but not used
+if (typeof window !== 'undefined')
+{
+    window.Viewport = Viewport;
+} })();
