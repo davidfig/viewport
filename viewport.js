@@ -80,7 +80,7 @@ Object.defineProperty(Viewport.prototype, "height", {
 // Change view window for viewport
 Viewport.prototype.view = function(width, height, center)
 {
-    if (_width !== 0)
+    if (width !== 0)
     {
         this._width = width;
         this._height = (width * this.renderer.height) / this.renderer.width;
