@@ -8,13 +8,13 @@
 // creates a zoomable and moveable window into a scene
 // renderer is of type github.com/davidfig/renderer
 // stage is optional and taken from renderer if not specified
-Viewport = function(renderer, _width, _height, stage)
+Viewport = function(renderer, width, height, stage)
 {
     this.renderer = renderer;
     this.stage = stage || renderer.stage;
     this.stage.rotation = 0;
-    this.center = {x: _width / 2, y: _height / 2};
-    this.view(_width, _height);
+    this.center = {x: width / 2, y: height / 2};
+    this.view(width, height);
 };
 
 Object.defineProperty(Viewport.prototype, "x", {
@@ -78,17 +78,17 @@ Object.defineProperty(Viewport.prototype, "height", {
 });
 
 // Change view window for viewport
-Viewport.prototype.view = function(_width, _height, center)
+Viewport.prototype.view = function(width, height, center)
 {
     if (_width !== 0)
     {
-        this._width = _width;
-        this._height = (_width * this.renderer.height) / this.renderer.width;
+        this._width = width;
+        this._height = (width * this.renderer.height) / this.renderer.width;
     }
     else
     {
-        this._height = _height;
-        this._width = (_height * this.renderer.width) / this.renderer.height;
+        this._height = height;
+        this._width = (height * this.renderer.width) / this.renderer.height;
     }
     if (center)
     {
@@ -231,9 +231,9 @@ Viewport.prototype.fit = function()
 };
 
 // change _height of view area
-Viewport.prototype._heightTo = function(_height)
+Viewport.prototype.heightTo = function(height)
 {
-    this.view(0, _height, this.center);
+    this.view(0, height, this.center);
 };
 
 
@@ -308,25 +308,15 @@ Viewport.prototype.toWorldSize = function(original)
 
 
 // return screen _height in the world coordinate system
-Viewport.prototype.screen_heightInWorld = function()
+Viewport.prototype.screenHeightInWorld = function()
 {
     return this.toWorldSize(this.renderer.height);
 };
 
 // return screen _width in the world coordinate system
-Viewport.prototype.screen_widthInWorld = function()
+Viewport.prototype.screenWidthInWorld = function()
 {
     return this.toWorldSize(this.renderer.width);
-};
-
-Viewport.prototype.world_width = function()
-{
-    return this.stage.width;
-};
-
-Viewport.prototype.world_height = function()
-{
-    return this.stage.height;
 };
 
 // converts an x value to a y value in the screen coordinates
