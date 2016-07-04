@@ -3,7 +3,7 @@
     License: MIT license <https://github.com/davidfig/viewport/license>
     Author: David Figatner
     Copyright (c) 2016 YOPEY YOPEY LLC
-*/ (function(){
+*/ ;(function(){
 
 // creates a zoomable and moveable window into a scene
 // renderer is of type github.com/davidfig/renderer
@@ -470,4 +470,4 @@ if (typeof exports !== 'undefined')
 if (typeof window !== 'undefined')
 {
     window.Viewport = Viewport;
-} })();
+}   })();
