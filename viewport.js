@@ -3,7 +3,9 @@
     License: MIT license <https://github.com/davidfig/viewport/license>
     Author: David Figatner
     Copyright (c) 2016 YOPEY YOPEY LLC
-*/ ;(function(){
+*/
+
+var tempPoint = new PIXI.Point();
 
 // creates a zoomable and moveable window into a scene
 // renderer is of type github.com/davidfig/renderer
@@ -240,16 +242,14 @@ Viewport.prototype.heightTo = function(height)
 // transform a world coordinate to a screen coordinate
 Viewport.prototype.toWorldFromScreen = function()
 {
-    var screen = {x: 0, y: 0};
+    var screen = tempPoint;
     if (arguments.length === 1)
     {
-        screen.x = arguments[0].x;
-        screen.y = arguments[0].y;
+        screen.set(arguments[0].x, arguments[0].y);
     }
     else
     {
-        screen.x = arguments[0];
-        screen.y = arguments[1];
+        screen.set(arguments[0], arguments[1]);
     }
 
     var point;
@@ -460,11 +460,11 @@ if (typeof define === 'function' && define.amd)
 // add support for CommonJS libraries such as browserify.
 if (typeof exports !== 'undefined')
 {
-    exports.Viewport = Viewport;
+    module.exports = Viewport;
 }
 
 // define globally in case AMD is not available or available but not used
 if (typeof window !== 'undefined')
 {
     window.Viewport = Viewport;
-}   })();
+}
