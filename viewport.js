@@ -23,7 +23,6 @@ Viewport = function(renderer, width, height, stage)
     {
         this.center = {x: 0, y: 0};
     }
-
     this.view(width, height);
 };
 
@@ -350,10 +349,9 @@ Viewport.prototype.recalculate = function()
     this.screenToViewRatio = this._width / this.renderer.width;
     this.viewToScreenRatio = this.renderer.width / this._width;
     this.screenRatio = this.renderer.height / this.renderer.width;
-
     this.stage.scale.set(this.viewToScreenRatio);
     this.stage.pivot.set(this.center.x, this.center.y);
-    this.stage.position.set(this._width / 2 * this.stage.scale.x, this._width / 2 * this.stage.scale.y);
+    this.stage.position.set(this._width / 2 * this.stage.scale.x, this._height / 2 * this.stage.scale.y);
     this.renderer.dirty = true;
 };
 
