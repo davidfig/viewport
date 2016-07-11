@@ -15,7 +15,15 @@ Viewport = function(renderer, width, height, stage)
     this.renderer = renderer;
     this.stage = stage || renderer.stage;
     this.stage.rotation = 0;
-    this.center = {x: width / 2, y: height / 2};
+    if (width)
+    {
+        this.center = {x: width / 2, y: height / 2};
+    }
+    else
+    {
+        this.center = {x: 0, y: 0};
+    }
+
     this.view(width, height);
 };
 
