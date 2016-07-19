@@ -1,9 +1,7 @@
-/*
-    viewport.js <https://github.com/davidfig/viewport>
-    License: MIT license <https://github.com/davidfig/viewport/license>
-    Author: David Figatner
-    Copyright (c) 2016 YOPEY YOPEY LLC
-*/
+// viewport.js <https://github.com/davidfig/viewport>
+// license: MIT license <https://github.com/davidfig/viewport/license>
+// author: David Figatner
+// copyright (c) 2016 YOPEY YOPEY LLC
 
 var tempPoint = new PIXI.Point();
 
@@ -13,6 +11,7 @@ var tempPoint = new PIXI.Point();
 Viewport = function(renderer, width, height, stage)
 {
     this.renderer = renderer;
+    this.renderers = [renderer];
     this.stage = stage || renderer.stage;
     this.stage.rotation = 0;
     if (width)
@@ -372,18 +371,32 @@ Viewport.prototype.recalculate = function()
     this.stage.scale.set(this.viewToScreenRatio);
     this.stage.pivot.set(this.center.x, this.center.y);
     this.stage.position.set(this._width / 2 * this.stage.scale.x, this._height / 2 * this.stage.scale.y);
-    this.renderer.dirty = true;
+    for (var i = 0; i < this.renderers.length; i++)
+    {
+        this.renderers[i].dirty = true;
+    }
 };
+
+// Makes a PIXI.Container or Renderer subject to viewport transforms
+// Note: each renderer needs to be the same size as the first renderer
+Viewport.prototype.apply = function()
+{
+    var arg = arguments[0];
+    if (arg instanceof Renderer)
+    {
+        arg.stage.position = this.stage.position;
+        arg.stage.scale = this.stage.scale;
+        arg.stage.pivot = this.stage.pivot;
+        this.renderers.push(arg);
+    }
+    else
+    {
+        arg.position = this.stage.position;
+        arg.scale = this.stage.scale;
+        arg.pivot = this.stage.pivot;
+    }
 
 /* OLD FUNCTIONS THAT I'VE NOT CONVERTED YET (WAITING UNTIL I NEED THEM)
-
-// Makes another PIXI.Container subject to viewport transforms
-Viewport.prototype.apply = function(container)
-{
-    container.position = this.stage.position;
-    container.scale = this.stage.scale;
-    container.pivot = this.stage.pivot;
-};
 
 Viewport.prototype.clampX = function()
 {
