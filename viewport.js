@@ -395,6 +395,7 @@ Viewport.prototype.apply = function()
         arg.scale = this.stage.scale;
         arg.pivot = this.stage.pivot;
     }
+}
 
 /* OLD FUNCTIONS THAT I'VE NOT CONVERTED YET (WAITING UNTIL I NEED THEM)
 
