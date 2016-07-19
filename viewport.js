@@ -202,6 +202,26 @@ Viewport.prototype.zoomTo = function(zoomX, zoomY, center)
     this.recalculate();
 };
 
+Viewport.prototype.zoomToFit = function(width, height, center)
+{
+    if (width > height / this.screenRatio)
+    {
+        this._width = width;
+        this._height = width * this.screenRatio;
+    }
+    else
+    {
+        this._height = height;
+        this._width = height / this.screenRatio;
+    }
+    if (center)
+    {
+        this.center.x = center.x;
+        this.center.y = center.y;
+    }
+    this.recalculate();
+};
+
 Viewport.prototype.zoomPercent = function(percent, center)
 {
     this._width += this._width * percent;
