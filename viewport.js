@@ -17,12 +17,12 @@ Viewport = function(renderer, width, height, stage)
     if (width)
     {
         this.center = {x: width / 2, y: height / 2};
+        this.view(width, height);
     }
     else
     {
         this.center = {x: 0, y: 0};
     }
-    this.view(width, height);
 };
 
 Object.defineProperty(Viewport.prototype, "x", {
@@ -455,33 +455,6 @@ Viewport.prototype.clamp = function() {
         }
     }
     this.recalculate();
-};
-
-// only works with a 100% div (default div)
-Viewport.prototype.uncrop = function()
-{
-    var div = this.renderer.div;
-    div.style.left = 0;
-    div.style.top = 0;
-    div.style._width = '100%';
-    div.style._height = '100%';
-};
-
-Viewport.prototype.crop = function()
-{
-    var div = this.renderer.div;
-    var _width = this.size.world.x * this.stage.scale.x;
-    var _height = this.size.world.y * this.stage.scale.y;
-    div.style._width = _width + 'px';
-    div.style._height = _height + 'px';
-    this.left = this.size.screen.x / 2 - _width / 2;
-    this.top = this.size.screen.y / 2 - _height / 2;
-    div.style.left =  this.left + 'px';
-    div.style.top = this.top + 'px';
-    this.stage.pivot.x = 0;
-    this.stage.pivot.y = 0;
-    this.stage.position.x = 0;
-    this.stage.position.y = 0;
 };
 
 */
