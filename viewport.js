@@ -371,6 +371,7 @@ Viewport.prototype.recalculate = function()
     this.stage.scale.set(this.viewToScreenRatio);
     this.stage.pivot.set(this.center.x, this.center.y);
     this.stage.position.set(this._width / 2 * this.stage.scale.x, this._height / 2 * this.stage.scale.y);
+    this.topLeft = {x: this.center.x - this._width / 2, y: this.center.y - this._height / 2};
     for (var i = 0; i < this.renderers.length; i++)
     {
         this.renderers[i].dirty = true;
