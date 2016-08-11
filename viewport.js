@@ -25,7 +25,7 @@ Viewport = function(renderer, width, height, stage)
     }
 };
 
-Object.defineProperty(Viewport.prototype, "x", {
+Object.defineProperty(Viewport.prototype, 'x', {
     get: function ()
     {
         return this.center.x;
@@ -37,7 +37,7 @@ Object.defineProperty(Viewport.prototype, "x", {
     }
 });
 
-Object.defineProperty(Viewport.prototype, "y", {
+Object.defineProperty(Viewport.prototype, 'y', {
     get: function ()
     {
         return this.center.y;
@@ -48,7 +48,7 @@ Object.defineProperty(Viewport.prototype, "y", {
     }
 });
 
-Object.defineProperty(Viewport.prototype, "rotation", {
+Object.defineProperty(Viewport.prototype, 'rotation', {
     get: function ()
     {
         return this.stage.rotation;
@@ -61,7 +61,7 @@ Object.defineProperty(Viewport.prototype, "rotation", {
     }
 });
 
-Object.defineProperty(Viewport.prototype, "width", {
+Object.defineProperty(Viewport.prototype, 'width', {
     get: function ()
     {
         return this._width;
@@ -73,7 +73,7 @@ Object.defineProperty(Viewport.prototype, "width", {
     }
 });
 
-Object.defineProperty(Viewport.prototype, "height", {
+Object.defineProperty(Viewport.prototype, 'height', {
     get: function ()
     {
         return this._height;
@@ -376,6 +376,7 @@ Viewport.prototype.recalculate = function()
     {
         this.renderers[i].dirty = true;
     }
+    this.bounds = {x: this.topLeft.x, y: this.topLeft.y, width: this._width, height: this._height};
 };
 
 // Makes a PIXI.Container or Renderer subject to viewport transforms
@@ -396,7 +397,7 @@ Viewport.prototype.apply = function()
         arg.scale = this.stage.scale;
         arg.pivot = this.stage.pivot;
     }
-}
+};
 
 /* OLD FUNCTIONS THAT I'VE NOT CONVERTED YET (WAITING UNTIL I NEED THEM)
 
