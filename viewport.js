@@ -399,68 +399,6 @@ Viewport.prototype.apply = function()
     }
 };
 
-/* OLD FUNCTIONS THAT I'VE NOT CONVERTED YET (WAITING UNTIL I NEED THEM)
-
-Viewport.prototype.clampX = function()
-{
-    if (this.size.view.x <= this.size.world.x)
-    {
-        if (this.center.x - this.size.view.x / 2 < 0)
-        {
-            this.center.x = this.size.view.x / 2;
-        }
-        if (this.center.x + this.size.view.x / 2 > this.size.world.x)
-        {
-            this.center.x = this.size.world.x - this.size.view.x / 2;
-        }
-    }
-    this.recalculate();
-};
-
-Viewport.prototype.clampY = function()
-{
-    if (this.size.view.y <= this.size.world.y)
-    {
-        if (this.center.y - this.size.view.y / 2 < 0)
-        {
-            this.center.y = this.size.view.y / 2;
-        }
-        if (this.center.y + this.size.view.y / 2 > this.size.world.y)
-        {
-            this.center.y = this.size.world.y - this.size.view.y / 2;
-        }
-    }
-    this.recalculate();
-};
-
-Viewport.prototype.clamp = function() {
-    if (this.size.view.x <= this.size.world.x)
-    {
-        if (this.center.x - this.size.view.x / 2 < 0)
-        {
-            this.center.x = this.size.view.x / 2;
-        }
-        if (this.center.x + this.size.view.x / 2 > this.size.world.x)
-        {
-            this.center.x = this.size.world.x - this.size.view.x / 2;
-        }
-    }
-    if (this.size.view.y <= this.size.world.y)
-    {
-        if (this.center.y - this.size.view.y / 2 < 0)
-        {
-            this.center.y = this.size.view.y / 2;
-        }
-        if (this.center.y + this.size.view.y / 2 > this.size.world.y)
-        {
-            this.center.y = this.size.world.y - this.size.view.y / 2;
-        }
-    }
-    this.recalculate();
-};
-
-*/
-
 // add support for AMD (Asynchronous Module Definition) libraries such as require.js.
 if (typeof define === 'function' && define.amd)
 {
