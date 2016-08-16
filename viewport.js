@@ -144,10 +144,11 @@ Viewport.prototype.moveTopLeft = function(x, y)
 };
 
 // Center viewport in the stage
+// TODO: this does NOT work
 Viewport.prototype.centerView = function()
 {
-    this.center.x = this.stage.width / 2;
-    this.center.y = this.stage.height / 2;
+    this.center.x = this.stage.width / this.stage.scale.x / 2;
+    this.center.y = this.stage.height / this.stage.scale.y / 2;
     this.recalculate();
 };
 
