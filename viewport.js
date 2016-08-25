@@ -45,6 +45,7 @@ Object.defineProperty(Viewport.prototype, 'y', {
     set: function(value)
     {
         this.center.y = value;
+        this.recalculate();
     }
 });
 
@@ -58,6 +59,7 @@ Object.defineProperty(Viewport.prototype, 'rotation', {
         this.stage.rotation = value;
         this.cos = Math.cos(value);
         this.sin = Math.sin(value);
+        this.recalculate();
     }
 });
 
