@@ -1,0 +1,19 @@
+{
+  "name": "@yy/viewport",
+  "version": "1.0.0",
+  "description": "viewport designed to work with pixi.js",
+  "main": "viewport.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/davidfig/viewport.git"
+  },
+  "author": "david figatner",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/davidfig/viewport/issues"
+  },
+  "homepage": "https://github.com/davidfig/viewport#readme"
+}
