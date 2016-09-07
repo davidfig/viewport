@@ -8,7 +8,7 @@ var tempPoint = new PIXI.Point();
 // creates a zoomable and moveable window into a scene
 // renderer is of type github.com/davidfig/renderer
 // stage is optional and taken from renderer if not specified
-Viewport = function(renderer, width, height, stage)
+var Viewport = function(renderer, width, height, stage)
 {
     this.renderer = renderer;
     this.renderers = [renderer];
@@ -379,6 +379,7 @@ Viewport.prototype.recalculate = function()
     {
         this.renderers[i].dirty = true;
     }
+    this.AABB = [this.topLeft.x, this.topLeft.y, this.topLeft.x + this._width, this.topLeft.y + this._height];
     this.bounds = {x: this.topLeft.x, y: this.topLeft.y, width: this._width, height: this._height};
 };
 
