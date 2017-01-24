@@ -1,0 +1,29 @@
+{
+  "name": "updatedemo",
+  "version": "1.0.0",
+  "description": "update loop API for javascript apps. Works well with https://github.com/davidfig/debug (included for testing and examples)",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --config webpack.config.js",
+    "test": "live-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davidfig/update.git"
+  },
+  "author": "David Figatner",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/davidfig/update/issues"
+  },
+  "homepage": "https://github.com/davidfig/update#readme",
+  "dependencies": {
+    "highlight.js": "^9.6.0",
+    "pixi.js": "^4.3.4",
+    "yy-animate": "^1.5.2",
+    "yy-debug": "^1.0.0",
+    "yy-random": "^1.0.6",
+    "yy-renderer": "^1.0.3",
+    "yy-update": "^1.0.0"
+  }
+}
