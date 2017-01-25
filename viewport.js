@@ -275,7 +275,7 @@ export default class Viewport
         {
             const x = this.center.x + (screen.x - this.renderer.width / 2) * this.screenToViewRatio;
             const y = this.center.y + (screen.y - this.renderer.height / 2) * this.screenToViewRatio;
-            return (x, y);
+            return {x, y};
         }
     }
 
