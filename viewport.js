@@ -1,12 +1,12 @@
 // viewport.js <https://github.com/davidfig/viewport>
 // license: MIT license <https://github.com/davidfig/viewport/license>
 // author: David Figatner
-// copyright (c) 2016 YOPEY YOPEY LLC
+// copyright (c) 2017 YOPEY YOPEY LLC
 
 // creates a zoomable and moveable window into a scene
 // renderer is of type github.com/davidfig/renderer
 // stage is optional and taken from renderer if not specified
-export default class Viewport
+module.exports = class Viewport
 {
     constructor(renderer, width, height, stage)
     {
