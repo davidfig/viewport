@@ -1,11 +1,11 @@
-import * as PIXI from 'pixi.js';
-import * as Debug from 'yy-debug';
-import * as Update from 'yy-update';
-import * as Animate from 'yy-animate';
-import Renderer from 'yy-renderer';
-import * as Random from 'yy-random';
-import * as hljs from 'highlight.js';
-import Viewport from '../viewport/viewport.js';
+const PIXI = require('pixi.js');
+const Debug = require('yy-debug');
+const Update = require('yy-update');
+const Animate = require('yy-animate');
+const Renderer = require('yy-renderer');
+const Random = require('yy-random');
+const hljs = require('highlight.js');
+const Viewport = require('../viewport/viewport.js');
 
 // debug panel on the bottom right
 Debug.init();

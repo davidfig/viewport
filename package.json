@@ -4,7 +4,7 @@
   "description": "update loop API for javascript apps. Works well with https://github.com/davidfig/debug (included for testing and examples)",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --config webpack.config.js",
+    "build": "browserify index.js -o index.compiled.js",
     "test": "live-server"
   },
   "repository": {
