@@ -3,11 +3,21 @@
 // author: David Figatner
 // copyright (c) 2017 YOPEY YOPEY LLC
 
-// creates a zoomable and moveable window into a scene
-// renderer is of type github.com/davidfig/renderer
-// stage is optional and taken from renderer if not specified
-module.exports = class Viewport
+/**
+ * creates a zoomable and moveable window into a scene
+ * renderer is of type github.com/davidfig/renderer
+ * stage is optional and taken from renderer if not specified
+ * @class
+ */
+class Viewport
 {
+    /**
+     *
+     * @param {Renderer} renderer from yy-renderer
+     * @param {number} width
+     * @param {number} height
+     * @param {PIXI.Container} stage
+     */
     constructor(renderer, width, height, stage)
     {
         this.renderer = renderer;
@@ -77,7 +87,12 @@ module.exports = class Viewport
         this.recalculate();
     }
 
-    // Change view window for viewport
+    /**
+     * Change view window for viewport
+     * @param {number} width
+     * @param {number} height
+     * @param {PIXI.Point} [center]
+     */
     view(width, height, center)
     {
         if (width !== 0)
@@ -98,11 +113,19 @@ module.exports = class Viewport
         this.recalculate();
     }
 
+    /**
+     * resizes view based on renderer.width
+     */
     resize()
     {
         this.view(this.renderer.width, 0);
     }
 
+    /**
+     * moves the viewport using a delta (not absolute)
+     * @param {number} deltaX
+     * @param {number} deltaY
+     */
     move(deltaX, deltaY)
     {
         this.center.x += deltaX;
@@ -110,8 +133,12 @@ module.exports = class Viewport
         this.recalculate();
     }
 
-    // moves the viewport to
-    // alternatively accepts function (point), where point = {x: x, y: y}
+
+    /**
+     * moves the center of the viewport to a specific coordinate
+     * @param {number|PIXI.Point} x
+     * @param {number} y
+     */
     moveTo(x, y)
     {
         if (arguments.length === 1)
@@ -127,7 +154,11 @@ module.exports = class Viewport
         this.recalculate();
     }
 
-    // move the viewport to (x, y) as calculated from the top-left of the viewport
+    /**
+     * moves the top-left of the viewport to a specific coordinate
+     * @param {number} x
+     * @param {number} y
+     */
     moveTopLeft(x, y)
     {
         this.center.x = x + this._width / 2;
@@ -135,7 +166,11 @@ module.exports = class Viewport
         this.recalculate();
     }
 
-    // zooms to pixels based on view _width
+    /**
+     * changes zoom by zoomDelta; height is changed based on aspect ratio
+     * @param {number} zoomDelta
+     * @param {PIXI.Point} [center]
+     */
     zoom(zoomDelta, center)
     {
         this._width += zoomDelta;
@@ -148,8 +183,15 @@ module.exports = class Viewport
         this.recalculate();
     }
 
-    // pinch to zoom
-    // amount, x, & y in screen coordinates; min and max in world coordinates
+    /**
+     * pinch to zoom
+     * @param {number} x in screen coordinates
+     * @param {number} y in screen coordinates
+     * @param {number} amount
+     * @param {number} min world coordinate
+     * @param {number} max in world coordinates
+     * @param {PIXI.Point} [center]
+     */
     zoomPinch(x, y, amount, min, max, center)
     {
         var change = amount + this._width;
@@ -172,7 +214,12 @@ module.exports = class Viewport
         this.recalculate();
     }
 
-    // if zoomX is 0, then ZoomY is used to calculated zoomX
+    /**
+     * zooms to a specific value
+     * @param {number} zoomX - if === 0 then zoomY is used
+     * @param {number} zoomY - only used if zoomX is set to 0
+     * @param {PIXI.Point} [center]
+     */
     zoomTo(zoomX, zoomY, center)
     {
         this._width = zoomX || zoomY / this.screenRatio;
@@ -185,6 +232,12 @@ module.exports = class Viewport
         this.recalculate();
     }
 
+    /**
+     *
+     * @param {number} width
+     * @param {number} height
+     * @param {PIXI.Point} [center]
+     */
     zoomToFit(width, height, center)
     {
         if (width > height / this.screenRatio)
@@ -205,6 +258,11 @@ module.exports = class Viewport
         this.recalculate();
     }
 
+    /**
+     * zoom by a percentage of the current zoom
+     * @param {number} percent
+     * @param {PIXI.Point} [center]
+     */
     zoomPercent(percent, center)
     {
         this._width += this._width * percent;
@@ -217,19 +275,25 @@ module.exports = class Viewport
         this.recalculate();
     }
 
-    // fit entire stage _width on screen
+    /**
+     * fit entire stage _width on screen
+     */
     fitX()
     {
         this.view(this.stage.width, 0);
     }
 
-    // fit entire stage _height on screen
+    /**
+     * fit entire stage _height on screen
+     */
     fitY()
     {
         this.view(0, this.stage.height);
     }
 
-    // fit entire stage on screen
+    /**
+     * fit entire stage on screen
+     */
     fit()
     {
         if (this.stage.width / this.stage.height > this.renderer.width / this.renderer.height)
@@ -242,13 +306,21 @@ module.exports = class Viewport
         }
     }
 
-    // change _height of view area
+    /**
+     * change _height of view area
+     * @param {width} height
+     */
     heightTo(height)
     {
         this.view(0, height, this.center);
     }
 
-    // transform a world coordinate to a screen coordinate
+    /**
+     * transform a world coordinate to a screen coordinate
+     * @param {number|PIXI.Point} x
+     * @param {number} y
+     * @return {object} x, y
+     */
     toWorldFromScreen()
     {
         const screen = {};
@@ -279,7 +351,11 @@ module.exports = class Viewport
         }
     }
 
-    // transform a screen coordinate to a world coordinate
+    /**
+     * transform a world coordinate to a screen coordinate
+     * @param {PIXI.Point} world
+     * @return {object} x, y
+     */
     toScreenFromWorld(world)
     {
         if (this.stage.rotation)
@@ -293,48 +369,74 @@ module.exports = class Viewport
         return {x: (world.x - this.center.x + this._width / 2) * this.viewToScreenRatio, y: (world.y - this.center.y + this._height / 2) * this.viewToScreenRatio};
     }
 
-    // Transform a number from view size to screen size
+    /**
+     * Transform a number from view size to screen size
+     * @param {number} original
+     * @return number
+     */
     toScreenSize(original)
     {
         return original * this.viewToScreenRatio;
     }
 
-    // Transform a number from screen size to view size
+    /**
+     * Transform a number from screen size to view size
+     * @param {number} original
+     * @return {number}
+     */
     toWorldSize(original)
     {
         return original * this.screenToViewRatio;
     }
 
-    // return screen _height in the world coordinate system
+    /**
+     * @return {number} screen _height in the world coordinate system
+     */
     screenHeightInWorld()
     {
         return this.toWorldSize(this.renderer.height);
     }
 
-    // return screen _width in the world coordinate system
+    /**
+     * @return {number} screen _width in the world coordinate system
+     */
     screenWidthInWorld()
     {
         return this.toWorldSize(this.renderer.width);
     }
 
-    // converts an x value to a y value in the screen coordinates
+    /**
+     * converts an x value to a y value in the screen coordinates
+     * @param {number} x
+     * @return {number}
+     */
     screenXtoY(x)
     {
         return x * this.renderer.height / this.renderer.width;
     }
 
-    // converts a y value to an x value in the screen coordinates
+    /**
+     * converts a y value to an x value in the screen coordinates
+     * @param {number} y
+     * @return {number}
+     */
     screenYtoX(y)
     {
         return y * this.renderer.width / this.renderer.height;
     }
 
+    /**
+     * @return {number} scale
+     */
     scaleGet()
     {
         return this.stage.scale.x;
     }
 
-    // recalucates and repositions
+    /**
+     * recalucates and repositions
+     * @private
+     */
     recalculate()
     {
         this.screenToViewRatio = this._width / this.renderer.width;
@@ -348,3 +450,5 @@ module.exports = class Viewport
         this.bounds = {x: this.topLeft.x, y: this.topLeft.y, width: this._width, height: this._height};
     }
 }
+
+module.exports = Viewport;
