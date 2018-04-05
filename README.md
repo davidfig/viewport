@@ -1,3 +1,5 @@
+### While this API does work and I used it in a few of my games, I also wrote and now use [pixi-viewport](https://github.com/davidfig/pixi-viewport). Check it out!
+
 ## viewport.js
 a 2D camera (viewport) designed to work with PIXI.js
 
@@ -32,7 +34,9 @@ see also
 <a name="Viewport"></a>
 
 ## Viewport
-creates a zoomable and moveable window into a scenerenderer is of type github.com/davidfig/rendererstage is optional and taken from renderer if not specified
+creates a zoomable and moveable window into a scene
+renderer is of type github.com/davidfig/renderer
+stage is optional and taken from renderer if not specified
 
 **Kind**: global class  
 
